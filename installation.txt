@@ -1,0 +1,54 @@
+1. Install expo app - npx create-expo-app@latest ./
+2. Reset app - npm run reset-project
+3. Install dependencies - npm install nativewind tailwindcss react-native-reanimated react-native-safe-area-context
+4. Configure tailwind/nativewind
+    - npx tailwind init
+    - tailwind.config.js
+        /** @type {import('tailwindcss').Config} */
+            module.exports = {
+            // NOTE: Update this to include the paths to all of your component files.
+            content: ["./app/**/*.{js,jsx,ts,tsx}"],
+            presets: [require("nativewind/preset")],
+            theme: {
+                extend: {},
+            },
+            plugins: [],
+        }
+    - global.css (/app)
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+    - babel.config.js (root)
+        module.exports = function (api) {
+            api.cache(true);
+            return {
+                presets: [
+                ["babel-preset-expo", { jsxImportSource: "nativewind" }],
+                "nativewind/babel",
+                ],
+            };
+        };
+    - npx expo customize metro.config.js (root)
+        const { getDefaultConfig } = require("expo/metro-config");
+        const { withNativeWind } = require('nativewind/metro');
+
+        const config = getDefaultConfig(__dirname)
+
+        module.exports = withNativeWind(config, { input: './app/global.css' })
+    - naivewind-env.d.ts (root)
+        /// <reference types="nativewind/types" />
+    - import global.css into _layout.txs
+
+    // Build App into Expo
+
+    - Install CLI (if not done) - npm install -g eas-cli
+    - check version -> eas -v
+    - login to account -> eas login
+    - confirm login -> eas whoami
+    - initialize -> eas init
+    - build -> eas build:configure
+    - instal dev-client for development - npx expo install expo-dev-client
+    - check dependencies -> npx expo install --check
+    - build for development -> eas build --profile development --platform android
+    - development build -> npx expo start --tunnel
+    - build for preview -> eas build --platform android --profile preview
